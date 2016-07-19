@@ -22,7 +22,7 @@
     },
     "autoload": {
         "psr-4": {
-            "andrea11\\ProsodyRestApi\\": ""
+            "andrea11\\": ""
         }
     },
     "minimum-stability": "dev"
