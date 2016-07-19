@@ -1,6 +1,6 @@
 <?php
 	
-namespace andrea11\ProsodyRestApi;
+namespace andrea11;
 
 use GuzzleHttp\Client;
 
