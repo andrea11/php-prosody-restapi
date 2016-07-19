@@ -1,0 +1,29 @@
+{
+    "name": "andrea11/php-prosody-restapi",
+    "description": "Manage prosody server using Rest Api",
+    "version": "1.0.0",
+    "keywords": ["prosody", "xmpp", "chat"],
+    "homepage": "https://github.com/andrea11/php-prosody-restapi",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Andrea Accardo",
+            "email": "Andrea.Andrea7@gmail.com"
+        }
+    ],
+    "support": {
+        "email": "yoroumah@gmail.com",
+        "issues": "https://github.com/andrea11/php-prosody-restapi/issues"
+    },
+    "require": {
+        "php": ">=5.4.0",
+        "ext-curl": "*",
+        "guzzlehttp/guzzle": ">=5.0"
+    },
+    "autoload": {
+        "psr-0": {
+            "ândrea11\\ProsodyRestApi": "/"
+        }
+    },
+    "minimum-stability": "dev"
+}
