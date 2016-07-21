@@ -6,24 +6,27 @@ use GuzzleHttp\Client;
 
 class ProsodyRestApi
 {
-    private $host		= 'fiduhub.dev';
-	private $port		= '5280';
-	private $module		= 'admin_rest';
-    protected $params   = array();
-    
-    private $client;
+    private $host;
+	private $port;
     private $username;
     private $password;
+	private $module;
+    
+    private $params;
+    private $client;
     /**
      * Class Contructor
      *
      */
-    public function __construct($username, $password)
+    public function __construct($host = 'fiduhub.dev', $port = '5280', $username = 'admin', $password = 'pass', $module = 'admin_rest')
     {
+        $this->client = new Client(['http_errors' => false]);
+        $this->host = $host;
+        $this->port = $port;
         $this->username = $username;
         $this->password = $password;
-        $this->client = new Client();
-       
+        $this->module = $module;
+        $this->params = array();
     }
 
     /**
@@ -65,14 +68,12 @@ class ProsodyRestApi
                 $result = null;
                 break;
         }
-        
         if ($result->getStatusCode() == 200 || $result->getStatusCode() == 201) {
             return array('status'=>true, 'message'=>json_decode($result->getBody()));
         }
         return array('status'=>false, 'message'=>json_decode($result->getBody()));
     	
     }
-    
 
     /**
      * Get all connected users
@@ -81,25 +82,12 @@ class ProsodyRestApi
      */
     public function getUsers()
     {
-    	$endpoint = '/users';        
+    	$endpoint = 'users';        
     	return $this->doRequest('get',$endpoint);
     }
 
-
     /**
-     * Get information for a specified user
-     *
-     * @return json|false   Json with data or error, or False when something went fully wrong
-     */
-    public function getUser($username)
-    {
-        $endpoint = '/users/'.$username; 
-        return $this->doRequest('get', $endpoint);
-    }
-
-
-    /**
-     * Creates a new OpenFire user
+     * Create a new user
      *
      * @param   string          $username   Username
      * @param   string          $password   Password
@@ -110,25 +98,37 @@ class ProsodyRestApi
      */
     public function addUser($username, $password, $name=false, $email=false, $groups=false)
     {
-        $endpoint = '/users'; 
-        return $this->doRequest('post', $endpoint, compact('username', 'password','name','email', 'groups'));
+        $endpoint = 'user/' . $username; 
+        return $this->doRequest('post', $endpoint, compact('password','name','email', 'groups'));
     }
 
+    /**
+     * NOW : Get user satus (connected or not)
+     * TODO : Get information for a specified user
+     *
+     * @return json|false   Json with data or error, or False when something went fully wrong
+     */
+    public function getUser($username)
+    {
+        $endpoint = '/'.$username.'/connected'; 
+        return $this->doRequest('get', $endpoint);
+    }
 
     /**
-     * Deletes an OpenFire user
+     * Delete an user
      *
      * @param   string          $username   Username
      * @return  json|false  Json with data or error, or False when something went fully wrong
      */
     public function deleteUser($username)
     {
-        $endpoint = '/users/'.$username; 
+        $endpoint = '/user/'.$username; 
         return $this->doRequest('delete', $endpoint);
     }
 
     /**
-     * Updates an OpenFire user
+     * NOW: Update user's infos (password)
+     * TODO: Update user's infos (all)
      *
      * @param   string          $username   Username
      * @param   string|false    $password   Password (Optional)
@@ -139,9 +139,171 @@ class ProsodyRestApi
      */
     public function updateUser($username, $password, $name=false, $email=false, $groups=false)
     {
-        $endpoint = '/users/'.$username; 
-        return $this->doRequest('put', $endpoint, compact('username', 'password','name','email', 'groups'));
+        $endpoint = '/user/'.$username.'/attribute';
+        return $this->doRequest('patch', $endpoint, compact('username', 'password','name','email', 'groups'));
     }
+
+    /**
+     * Create a roster between an user and a contact
+     *
+     * @param   string          $username       Username
+     * @param   string          $contactJID     Contact's JID
+     * @return  json|false  Json with data or error, or False when something went fully wrong
+     */
+    public function addRoster($username, $contact)
+    {
+        $endpoint = 'roster/' . $username;
+        $contact = $contact . '@' . $this->host;
+        return $this->doRequest('post', $endpoint, compact('contact'));
+    }
+
+    /**
+     * Delete a roster between an user and a contact
+     *
+     * @param   string          $username       Username
+     * @param   string          $contactJID     Contact's JID
+     * @return  json|false  Json with data or error, or False when something went fully wrong
+     */
+    public function deleteRoster($username, $contact)
+    {
+        $endpoint = 'roster/' . $username;
+        $contact = $contact . '@' . $this->host;
+        return $this->doRequest('delete', $endpoint, compact('contact'));
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
      /**
      * locks/Disables an OpenFire user
